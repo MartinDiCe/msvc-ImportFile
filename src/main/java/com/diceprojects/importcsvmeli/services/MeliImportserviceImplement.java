@@ -1,6 +1,9 @@
 package com.diceprojects.importcsvmeli.services;
 
+import com.diceprojects.importcsvmeli.dto.ImportResponseDTO;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,10 +19,8 @@ import com.diceprojects.importcsvmeli.persistences.models.Columnas;
 import com.diceprojects.importcsvmeli.persistences.models.MeliImport;
 import com.diceprojects.importcsvmeli.persistences.repositories.ColumnasRepository;
 import com.diceprojects.importcsvmeli.persistences.repositories.MeliImportRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Service
@@ -34,9 +35,11 @@ public class MeliImportserviceImplement implements MeliImportservice {
     }
 
     @Override
-    public String importFile(String filePath, String fileName) {
-
-        List<String[]> rows = readCSVFile(filePath);
+    public ImportResponseDTO importFile(String filePath, String fileName) {
+        String file = new StringBuilder()
+                .append(filePath)
+                .append(fileName)
+                .toString();
 
         String operacion = getOperacionFromFileName(fileName);
 
@@ -46,74 +49,238 @@ public class MeliImportserviceImplement implements MeliImportservice {
             throw new ColumnasNoEncontradasException(operacion);
         }
 
-        for (String[] row : rows) {
-
-            String fechaInicioPlanStr = getValueFromMapping(row, columnas.getFechaInicioPlanMapping());
-            Date fechaInicioPlan = parseDate(fechaInicioPlanStr).getBody();
-
-            String fechaFinPlanStr = getValueFromMapping(row, columnas.getFechaFinPlanMapping());
-            Date fechaFinPlan = parseDate(fechaFinPlanStr).getBody();
-
-            String pesoStr = getValueFromMapping(row, columnas.getPesoMapping());
-            BigDecimal peso = new BigDecimal(pesoStr);
-
-            String volumenStr = getValueFromMapping(row, columnas.getVolumenMapping());
-            BigDecimal volumen = new BigDecimal(volumenStr);
-
-            String paquetesStr = getValueFromMapping(row, columnas.getPaquetesMapping());
-            Integer paquetes = Integer.parseInt(paquetesStr);
-
-            MeliImport meliImport = new MeliImport(
-                    null,
-                    getValueFromMapping(row, columnas.getRutaMeliMapping()),
-                    getValueFromMapping(row, columnas.getRutaReferenciaMapping()),
-                    fechaInicioPlan,
-                    fechaFinPlan,
-                    getValueFromMapping(row, columnas.getTipoVehiculoMapping()),
-                    getValueFromMapping(row, columnas.getVehiculoIdMapping()),
-                    getValueFromMapping(row, columnas.getPatenteVehiculoTractorMapping()),
-                    getValueFromMapping(row, columnas.getPatenteVehiculoCarga1Mapping()),
-                    getValueFromMapping(row, columnas.getConductorIdMapping()),
-                    getValueFromMapping(row, columnas.getDepositoSalidaMapping()),
-                    getValueFromMapping(row, columnas.getDepositoLlegadaMapping()),
-                    getValueFromMapping(row, columnas.getTipoColectaMapping()),
-                    getValueFromMapping(row, columnas.getTipoRutaMapping()),
-                    peso,
-                    volumen,
-                    getValueFromMapping(row, columnas.getPalletsMapping()),
-                    paquetes,
-                    getValueFromMapping(row, columnas.getIdParadaMapping()),
-                    getValueFromMapping(row, columnas.getParadaMapping()),
-                    getValueFromMapping(row, columnas.getTipoParadaMapping()),
-                    getValueFromMapping(row, columnas.getPuntualidadMapping()),
-                    getValueFromMapping(row, columnas.getTopSellerMapping()),
-                    getValueFromMapping(row, columnas.getPlanificadoMapping()),
-                    getValueFromMapping(row, columnas.getDescripcionMapping()),
-                    operacion,
-                    fileName
-            );
-
-
-            try {
-                repository.save(meliImport);
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
-            }
+        MeliImport existingImport = repository.findFirstByArchivoImportacion(fileName);
+        if (existingImport != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El archivo '" + fileName + "' ya ha sido importado anteriormente.");
         }
 
-        return "Importación exitosa";
+        List<String[]> rows = readCSVFile(file, columnas.getDelimitadorArchivoMapping());
+        int processedRows = 0;
+
+        try {
+            boolean firstRowSkipped = false;
+            for (String[] row : rows) {
+                if (!firstRowSkipped) {
+                    firstRowSkipped = true;
+                    continue;
+                }
+
+                try {
+                    MeliImport meliImport = new MeliImport();
+
+                    if (columnas.getFechaInicioPlanMapping() != null) {
+                        String fechaInicioPlanStr = getValueFromMapping(row, columnas.getFechaInicioPlanMapping());
+                        if (fechaInicioPlanStr != null) {
+                            Date fechaInicioPlan = parseDate(fechaInicioPlanStr);
+                            meliImport.setFechaInicioPlan(fechaInicioPlan);
+                        }
+                    }
+
+                    if (columnas.getFechaFinPlanMapping() != null) {
+                        String fechaFinPlanStr = getValueFromMapping(row, columnas.getFechaFinPlanMapping());
+                        if (fechaFinPlanStr != null) {
+                            Date fechaFinPlan = parseDate(fechaFinPlanStr);
+                            meliImport.setFechaFinPlan(fechaFinPlan);
+                        }
+                    }
+
+                    if (columnas.getPesoMapping() != null) {
+                        String pesoStr = getValueFromMapping(row, columnas.getPesoMapping());
+                        if (pesoStr != null) {
+                            meliImport.setPeso(pesoStr);
+                        }
+                    }
+
+                    if (columnas.getVolumenMapping() != null) {
+                        String volumenStr = getValueFromMapping(row, columnas.getVolumenMapping());
+                        if (volumenStr != null) {
+                            meliImport.setVolumen(volumenStr);
+                        }
+                    }
+
+                    if (columnas.getPaquetesMapping() != null) {
+                        String paquetesStr = getValueFromMapping(row, columnas.getPaquetesMapping());
+                        if (paquetesStr != null) {
+                            Integer paquetes = Integer.parseInt(paquetesStr);
+                            meliImport.setPaquetes(paquetes);
+                        }
+                    }
+
+                    if (columnas.getRutaMeliMapping() != null) {
+                        String rutaMeliStr = getValueFromMapping(row, columnas.getRutaMeliMapping());
+                        if (rutaMeliStr != null) {
+                            meliImport.setRutaMeli(rutaMeliStr);
+                        }
+                    }
+
+                    if (columnas.getRutaReferenciaMapping() != null) {
+                        String rutaReferenciaStr = getValueFromMapping(row, columnas.getRutaReferenciaMapping());
+                        if (rutaReferenciaStr != null) {
+                            meliImport.setRutaReferencia(rutaReferenciaStr);
+                        }
+                    }
+
+                    if (columnas.getTipoVehiculoMapping() != null) {
+                        String tipoVehiculoStr = getValueFromMapping(row, columnas.getTipoVehiculoMapping());
+                        if (tipoVehiculoStr != null) {
+                            meliImport.setTipoVehiculo(tipoVehiculoStr);
+                        }
+                    }
+
+                    if (columnas.getVehiculoIdMapping() != null) {
+                        String vehiculoIdStr = getValueFromMapping(row, columnas.getVehiculoIdMapping());
+                        if (vehiculoIdStr != null) {
+                            meliImport.setVehiculoID(vehiculoIdStr);
+                        }
+                    }
+
+                    if (columnas.getPatenteVehiculoTractorMapping() != null) {
+                        String patenteVehiculoTractorStr = getValueFromMapping(row, columnas.getPatenteVehiculoTractorMapping());
+                        if (patenteVehiculoTractorStr != null) {
+                            meliImport.setPatenteVehiculoTractor(patenteVehiculoTractorStr);
+                        }
+                    }
+
+                    if (columnas.getPatenteVehiculoCarga1Mapping() != null) {
+                        String patenteVehiculoCargaStr = getValueFromMapping(row, columnas.getPatenteVehiculoCarga1Mapping());
+                        if (patenteVehiculoCargaStr != null) {
+                            meliImport.setPatenteVehiculoCarga1(patenteVehiculoCargaStr);
+                        }
+                    }
+
+                    if (columnas.getConductorIdMapping() != null) {
+                        String conductorIdStr = getValueFromMapping(row, columnas.getConductorIdMapping());
+                        if (conductorIdStr != null) {
+                            meliImport.setConductorId(conductorIdStr);
+                        }
+                    }
+
+                    if (columnas.getDepositoSalidaMapping() != null) {
+                        String depositoSalidaStr = getValueFromMapping(row, columnas.getDepositoSalidaMapping());
+                        if (depositoSalidaStr != null) {
+                            meliImport.setDepositoSalida(depositoSalidaStr);
+                        }
+                    }
+
+                    if (columnas.getDepositoLlegadaMapping() != null) {
+                        String depositoLlegadaStr = getValueFromMapping(row, columnas.getDepositoLlegadaMapping());
+                        if (depositoLlegadaStr != null) {
+                            meliImport.setDepositoLlegada(depositoLlegadaStr);
+                        }
+                    }
+
+                    if (columnas.getTipoColectaMapping() != null) {
+                        String tipoColectaStr = getValueFromMapping(row, columnas.getTipoColectaMapping());
+                        if (tipoColectaStr != null) {
+                            meliImport.setTipoColecta(tipoColectaStr);
+                        }
+                    }
+
+                    if (columnas.getTipoRutaMapping() != null) {
+                        String tipoRutaStr = getValueFromMapping(row, columnas.getTipoRutaMapping());
+                        if (tipoRutaStr != null) {
+                            meliImport.setTipoRuta(tipoRutaStr);
+                        }
+                    }
+
+                    if (columnas.getPalletsMapping() != null) {
+                        String palletsStr = getValueFromMapping(row, columnas.getPalletsMapping());
+                        if (palletsStr != null) {
+                            meliImport.setPallets(palletsStr);
+                        }
+                    }
+
+                    if (columnas.getIdParadaMapping() != null) {
+                        String idParadaStr = getValueFromMapping(row, columnas.getIdParadaMapping());
+                        if (idParadaStr != null) {
+                            meliImport.setIdParada(idParadaStr);
+                        }
+                    }
+
+                    if (columnas.getParadaMapping() != null) {
+                        String paradaStr = getValueFromMapping(row, columnas.getParadaMapping());
+                        if (paradaStr != null) {
+                            meliImport.setParada(paradaStr);
+                        }
+                    }
+
+                    if (columnas.getTipoParadaMapping() != null) {
+                        String tipoParadaStr = getValueFromMapping(row, columnas.getTipoParadaMapping());
+                        if (tipoParadaStr != null) {
+                            meliImport.setTipoParada(tipoParadaStr);
+                        }
+                    }
+
+                    if (columnas.getPuntualidadMapping() != null) {
+                        String puntualidadStr = getValueFromMapping(row, columnas.getPuntualidadMapping());
+                        if (puntualidadStr != null) {
+                            meliImport.setPuntualidad(puntualidadStr);
+                        }
+                    }
+
+                    if (columnas.getTopSellerMapping() != null) {
+                        String topSellerStr = getValueFromMapping(row, columnas.getTopSellerMapping());
+                        if (topSellerStr != null) {
+                            meliImport.setTopSeller(topSellerStr);
+                        }
+                    }
+
+                    if (columnas.getPlanificadoMapping() != null) {
+                        String planificadoStr = getValueFromMapping(row, columnas.getPlanificadoMapping());
+                        if (planificadoStr != null) {
+                            meliImport.setPlanificado(planificadoStr);
+                        }
+                    }
+
+                    if (columnas.getDescripcionMapping() != null) {
+                        String descripcionStr = getValueFromMapping(row, columnas.getDescripcionMapping());
+                        if (descripcionStr != null) {
+                            if (descripcionStr.length() > 500) {
+                                descripcionStr = descripcionStr.substring(0, 500);
+                            }
+                            meliImport.setDescripcion(descripcionStr);
+                        }
+                    }
+
+                    meliImport.setOperacion(operacion);
+                    meliImport.setArchivoImportacion(fileName);
+
+                    repository.save(meliImport);
+
+                    processedRows++;
+
+                } catch (Exception e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
+        }
+
+        ImportResponseDTO response = new ImportResponseDTO();
+        response.setStatus("200");
+        response.setTitle("Importación exitosa");
+        response.setDetail("Cantidad de lineas leídas: "+ processedRows);
+        return response;
     }
 
-    public List<String[]> readCSVFile(String filePath) {
+    public List<String[]> readCSVFile(String file, char delimitadorArchivoMapping) {
         List<String[]> rows;
+        String delimitador = String.valueOf(delimitadorArchivoMapping);
 
-        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+        try (CSVReader reader = new CSVReaderBuilder(new FileReader(file))
+                .withCSVParser(new CSVParserBuilder().withSeparator(delimitador.charAt(0)).build())
+                .build()) {
             rows = reader.readAll();
-        } catch (IOException | CsvException e) {
+        } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al leer el contenido del archivo", e);
+        } catch (CsvException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al leer el contenido del archivo CSV", e);
         }
+
         return rows;
     }
+
 
     public String getValueFromMapping(String[] row, int columnIndex) {
         try {
@@ -127,7 +294,7 @@ public class MeliImportserviceImplement implements MeliImportservice {
         }
     }
 
-    private ResponseEntity<Date> parseDate(String dateValue) {
+    private Date parseDate(String dateValue) {
         List<String> dateFormats = new ArrayList<>();
         dateFormats.add("yyyy-MM-dd");
         dateFormats.add("dd/MM/yyyy");
@@ -136,7 +303,7 @@ public class MeliImportserviceImplement implements MeliImportservice {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
                 Date parsedDate = sdf.parse(dateValue);
-                return ResponseEntity.ok(parsedDate);
+                return parsedDate;
             } catch (ParseException e) {
                 // El formato de fecha no coincide, intenta con el siguiente formato
             }

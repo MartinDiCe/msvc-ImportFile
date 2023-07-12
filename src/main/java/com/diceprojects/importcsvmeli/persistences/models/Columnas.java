@@ -15,81 +15,84 @@ public class Columnas {
     private Long id;
 
     @Column(name = "ruta_meli")
-    private int rutaMeliMapping;
+    private Integer rutaMeliMapping;
 
     @Column(name = "ruta_referencia")
-    private int rutaReferenciaMapping;
+    private Integer rutaReferenciaMapping;
 
     @Column(name = "fecha_inicio_plan")
-    private int fechaInicioPlanMapping;
+    private Integer fechaInicioPlanMapping;
 
     @Column(name = "fecha_fin_plan")
-    private int fechaFinPlanMapping;
+    private Integer fechaFinPlanMapping;
 
     @Column(name = "tipo_vehiculo")
-    private int tipoVehiculoMapping;
+    private Integer tipoVehiculoMapping;
 
     @Column(name = "vehiculo_id")
-    private int vehiculoIdMapping;
+    private Integer vehiculoIdMapping;
 
     @Column(name = "patente_vehiculo_tractor")
-    private int patenteVehiculoTractorMapping;
+    private Integer patenteVehiculoTractorMapping;
 
     @Column(name = "patente_vehiculo_carga1")
-    private int patenteVehiculoCarga1Mapping;
+    private Integer patenteVehiculoCarga1Mapping;
 
     @Column(name = "conductor_id")
-    private int conductorIdMapping;
+    private Integer conductorIdMapping;
 
     @Column(name = "deposito_salida")
-    private int depositoSalidaMapping;
+    private Integer depositoSalidaMapping;
 
     @Column(name = "deposito_llegada")
-    private int depositoLlegadaMapping;
+    private Integer depositoLlegadaMapping;
 
     @Column(name = "tipo_colecta")
-    private int tipoColectaMapping;
+    private Integer tipoColectaMapping;
 
     @Column(name = "tipo_ruta")
-    private int tipoRutaMapping;
+    private Integer tipoRutaMapping;
 
     @Column(name = "peso")
-    private int pesoMapping;
+    private Integer pesoMapping;
 
     @Column(name = "volumen")
-    private int volumenMapping;
+    private Integer volumenMapping;
 
     @Column(name = "pallets")
-    private int palletsMapping;
+    private Integer palletsMapping;
 
     @Column(name = "paquetes")
-    private int paquetesMapping;
+    private Integer paquetesMapping;
 
     @Column(name = "id_parada")
-    private int idParadaMapping;
+    private Integer idParadaMapping;
 
     @Column(name = "parada")
-    private int paradaMapping;
+    private Integer paradaMapping;
 
     @Column(name = "tipo_parada")
-    private int tipoParadaMapping;
+    private Integer tipoParadaMapping;
 
     @Column(name = "puntualidad")
-    private int puntualidadMapping;
+    private Integer puntualidadMapping;
 
     @Column(name = "top_seller")
-    private int topSellerMapping;
+    private Integer topSellerMapping;
 
     @Column(name = "planificado")
-    private int planificadoMapping;
+    private Integer planificadoMapping;
 
     @Column(name = "descripcion")
-    private int descripcionMapping;
+    private Integer descripcionMapping;
+
+    @Column(name = "delimitador_archivo")
+    private char delimitadorArchivoMapping;
 
     @Column(name = "operacion_referencia")
     private String operacionMapping;
 
-    public Columnas(Long id, int rutaMeliMapping, int rutaReferenciaMapping, int fechaInicioPlanMapping, int fechaFinPlanMapping, int tipoVehiculoMapping, int vehiculoIdMapping, int patenteVehiculoTractorMapping, int patenteVehiculoCarga1Mapping, int conductorIdMapping, int depositoSalidaMapping, int depositoLlegadaMapping, int tipoColectaMapping, int tipoRutaMapping, int pesoMapping, int volumenMapping, int palletsMapping, int paquetesMapping, int idParadaMapping, int paradaMapping, int tipoParadaMapping, int puntualidadMapping, int topSellerMapping, int planificadoMapping, int descripcionMapping, String operacionMapping) {
+    public Columnas(Long id, Integer rutaMeliMapping, Integer rutaReferenciaMapping, Integer fechaInicioPlanMapping, Integer fechaFinPlanMapping, Integer tipoVehiculoMapping, Integer vehiculoIdMapping, Integer patenteVehiculoTractorMapping, Integer patenteVehiculoCarga1Mapping, Integer conductorIdMapping, Integer depositoSalidaMapping, Integer depositoLlegadaMapping, Integer tipoColectaMapping, Integer tipoRutaMapping, Integer pesoMapping, Integer volumenMapping, Integer palletsMapping, Integer paquetesMapping, Integer idParadaMapping, Integer paradaMapping, Integer tipoParadaMapping, Integer puntualidadMapping, Integer topSellerMapping, Integer planificadoMapping, Integer descripcionMapping, String operacionMapping, char delimitadorArchivo) {
         this.id = id;
         this.rutaMeliMapping = rutaMeliMapping;
         this.rutaReferenciaMapping = rutaReferenciaMapping;
@@ -115,6 +118,7 @@ public class Columnas {
         this.topSellerMapping = topSellerMapping;
         this.planificadoMapping = planificadoMapping;
         this.descripcionMapping = descripcionMapping;
+        this.delimitadorArchivoMapping = delimitadorArchivo;
         this.operacionMapping = operacionMapping;
     }
 

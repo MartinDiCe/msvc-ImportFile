@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeliImportRepository extends JpaRepository<MeliImport, Long> {
-    // Puedes agregar métodos adicionales personalizados si lo necesitas
+    MeliImport findFirstByArchivoImportacion(String fileName);
+
 }

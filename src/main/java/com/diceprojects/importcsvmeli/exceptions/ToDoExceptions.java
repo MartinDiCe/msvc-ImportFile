@@ -1,6 +1,7 @@
 package com.diceprojects.importcsvmeli.exceptions;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
 
 
