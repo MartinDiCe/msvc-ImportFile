@@ -16,20 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 import com.diceprojects.importcsvmeli.exceptions.ColumnasNoEncontradasException;
 import com.diceprojects.importcsvmeli.persistences.models.Columnas;
-import com.diceprojects.importcsvmeli.persistences.models.MeliImport;
+import com.diceprojects.importcsvmeli.persistences.models.FileImport;
 import com.diceprojects.importcsvmeli.persistences.repositories.ColumnasRepository;
-import com.diceprojects.importcsvmeli.persistences.repositories.MeliImportRepository;
+import com.diceprojects.importcsvmeli.persistences.repositories.FileImportRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
-public class MeliImportserviceImplement implements MeliImportservice {
+public class FileImportserviceImplement implements FileImportservice {
 
-    private final MeliImportRepository repository;
+    private final FileImportRepository repository;
     private final ColumnasRepository columnasRepository;
 
-    public MeliImportserviceImplement(MeliImportRepository repository, ColumnasRepository columnasRepository) {
+    public FileImportserviceImplement(FileImportRepository repository, ColumnasRepository columnasRepository) {
         this.repository = repository;
         this.columnasRepository = columnasRepository;
     }
@@ -49,7 +49,7 @@ public class MeliImportserviceImplement implements MeliImportservice {
             throw new ColumnasNoEncontradasException(operacion);
         }
 
-        MeliImport existingImport = repository.findFirstByArchivoImportacion(fileName);
+        FileImport existingImport = repository.findFirstByArchivoImportacion(fileName);
         if (existingImport != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El archivo '" + fileName + "' ya ha sido importado anteriormente.");
         }
@@ -66,186 +66,186 @@ public class MeliImportserviceImplement implements MeliImportservice {
                 }
 
                 try {
-                    MeliImport meliImport = new MeliImport();
+                    FileImport fileImport = new FileImport();
 
-                    if (columnas.getFechaInicioPlanMapping() != null) {
-                        String fechaInicioPlanStr = getValueFromMapping(row, columnas.getFechaInicioPlanMapping());
+                    if (columnas.getColumna2Mapping() != null) {
+                        String fechaInicioPlanStr = getValueFromMapping(row, columnas.getColumna2Mapping());
                         if (fechaInicioPlanStr != null) {
                             Date fechaInicioPlan = parseDate(fechaInicioPlanStr);
-                            meliImport.setFechaInicioPlan(fechaInicioPlan);
+                            fileImport.setFechaInicioPlan(fechaInicioPlan);
                         }
                     }
 
-                    if (columnas.getFechaFinPlanMapping() != null) {
-                        String fechaFinPlanStr = getValueFromMapping(row, columnas.getFechaFinPlanMapping());
+                    if (columnas.getColumna3Mapping() != null) {
+                        String fechaFinPlanStr = getValueFromMapping(row, columnas.getColumna3Mapping());
                         if (fechaFinPlanStr != null) {
                             Date fechaFinPlan = parseDate(fechaFinPlanStr);
-                            meliImport.setFechaFinPlan(fechaFinPlan);
+                            fileImport.setFechaFinPlan(fechaFinPlan);
                         }
                     }
 
-                    if (columnas.getPesoMapping() != null) {
-                        String pesoStr = getValueFromMapping(row, columnas.getPesoMapping());
+                    if (columnas.getColumna13Mapping() != null) {
+                        String pesoStr = getValueFromMapping(row, columnas.getColumna13Mapping());
                         if (pesoStr != null) {
-                            meliImport.setPeso(pesoStr);
+                            fileImport.setPeso(pesoStr);
                         }
                     }
 
-                    if (columnas.getVolumenMapping() != null) {
-                        String volumenStr = getValueFromMapping(row, columnas.getVolumenMapping());
+                    if (columnas.getColumna14Mapping() != null) {
+                        String volumenStr = getValueFromMapping(row, columnas.getColumna14Mapping());
                         if (volumenStr != null) {
-                            meliImport.setVolumen(volumenStr);
+                            fileImport.setVolumen(volumenStr);
                         }
                     }
 
-                    if (columnas.getPaquetesMapping() != null) {
-                        String paquetesStr = getValueFromMapping(row, columnas.getPaquetesMapping());
+                    if (columnas.getColumna16Mapping() != null) {
+                        String paquetesStr = getValueFromMapping(row, columnas.getColumna16Mapping());
                         if (paquetesStr != null) {
                             Integer paquetes = Integer.parseInt(paquetesStr);
-                            meliImport.setPaquetes(paquetes);
+                            fileImport.setPaquetes(paquetes);
                         }
                     }
 
-                    if (columnas.getRutaMeliMapping() != null) {
-                        String rutaMeliStr = getValueFromMapping(row, columnas.getRutaMeliMapping());
+                    if (columnas.getColumna0Mapping() != null) {
+                        String rutaMeliStr = getValueFromMapping(row, columnas.getColumna0Mapping());
                         if (rutaMeliStr != null) {
-                            meliImport.setRutaMeli(rutaMeliStr);
+                            fileImport.setRutaMeli(rutaMeliStr);
                         }
                     }
 
-                    if (columnas.getRutaReferenciaMapping() != null) {
-                        String rutaReferenciaStr = getValueFromMapping(row, columnas.getRutaReferenciaMapping());
+                    if (columnas.getColumna1Mapping() != null) {
+                        String rutaReferenciaStr = getValueFromMapping(row, columnas.getColumna1Mapping());
                         if (rutaReferenciaStr != null) {
-                            meliImport.setRutaReferencia(rutaReferenciaStr);
+                            fileImport.setRutaReferencia(rutaReferenciaStr);
                         }
                     }
 
-                    if (columnas.getTipoVehiculoMapping() != null) {
-                        String tipoVehiculoStr = getValueFromMapping(row, columnas.getTipoVehiculoMapping());
+                    if (columnas.getColumna4Mapping() != null) {
+                        String tipoVehiculoStr = getValueFromMapping(row, columnas.getColumna4Mapping());
                         if (tipoVehiculoStr != null) {
-                            meliImport.setTipoVehiculo(tipoVehiculoStr);
+                            fileImport.setTipoVehiculo(tipoVehiculoStr);
                         }
                     }
 
-                    if (columnas.getVehiculoIdMapping() != null) {
-                        String vehiculoIdStr = getValueFromMapping(row, columnas.getVehiculoIdMapping());
+                    if (columnas.getColumna5Mapping() != null) {
+                        String vehiculoIdStr = getValueFromMapping(row, columnas.getColumna5Mapping());
                         if (vehiculoIdStr != null) {
-                            meliImport.setVehiculoID(vehiculoIdStr);
+                            fileImport.setVehiculoID(vehiculoIdStr);
                         }
                     }
 
-                    if (columnas.getPatenteVehiculoTractorMapping() != null) {
-                        String patenteVehiculoTractorStr = getValueFromMapping(row, columnas.getPatenteVehiculoTractorMapping());
+                    if (columnas.getColumna6Mapping() != null) {
+                        String patenteVehiculoTractorStr = getValueFromMapping(row, columnas.getColumna6Mapping());
                         if (patenteVehiculoTractorStr != null) {
-                            meliImport.setPatenteVehiculoTractor(patenteVehiculoTractorStr);
+                            fileImport.setPatenteVehiculoTractor(patenteVehiculoTractorStr);
                         }
                     }
 
-                    if (columnas.getPatenteVehiculoCarga1Mapping() != null) {
-                        String patenteVehiculoCargaStr = getValueFromMapping(row, columnas.getPatenteVehiculoCarga1Mapping());
+                    if (columnas.getColumna7Mapping() != null) {
+                        String patenteVehiculoCargaStr = getValueFromMapping(row, columnas.getColumna7Mapping());
                         if (patenteVehiculoCargaStr != null) {
-                            meliImport.setPatenteVehiculoCarga1(patenteVehiculoCargaStr);
+                            fileImport.setPatenteVehiculoCarga1(patenteVehiculoCargaStr);
                         }
                     }
 
-                    if (columnas.getConductorIdMapping() != null) {
-                        String conductorIdStr = getValueFromMapping(row, columnas.getConductorIdMapping());
+                    if (columnas.getColumna8Mapping() != null) {
+                        String conductorIdStr = getValueFromMapping(row, columnas.getColumna8Mapping());
                         if (conductorIdStr != null) {
-                            meliImport.setConductorId(conductorIdStr);
+                            fileImport.setConductorId(conductorIdStr);
                         }
                     }
 
-                    if (columnas.getDepositoSalidaMapping() != null) {
-                        String depositoSalidaStr = getValueFromMapping(row, columnas.getDepositoSalidaMapping());
+                    if (columnas.getColumna9Mapping() != null) {
+                        String depositoSalidaStr = getValueFromMapping(row, columnas.getColumna9Mapping());
                         if (depositoSalidaStr != null) {
-                            meliImport.setDepositoSalida(depositoSalidaStr);
+                            fileImport.setDepositoSalida(depositoSalidaStr);
                         }
                     }
 
-                    if (columnas.getDepositoLlegadaMapping() != null) {
-                        String depositoLlegadaStr = getValueFromMapping(row, columnas.getDepositoLlegadaMapping());
+                    if (columnas.getColumna10Mapping() != null) {
+                        String depositoLlegadaStr = getValueFromMapping(row, columnas.getColumna10Mapping());
                         if (depositoLlegadaStr != null) {
-                            meliImport.setDepositoLlegada(depositoLlegadaStr);
+                            fileImport.setDepositoLlegada(depositoLlegadaStr);
                         }
                     }
 
-                    if (columnas.getTipoColectaMapping() != null) {
-                        String tipoColectaStr = getValueFromMapping(row, columnas.getTipoColectaMapping());
+                    if (columnas.getColumna11Mapping() != null) {
+                        String tipoColectaStr = getValueFromMapping(row, columnas.getColumna11Mapping());
                         if (tipoColectaStr != null) {
-                            meliImport.setTipoColecta(tipoColectaStr);
+                            fileImport.setTipoColecta(tipoColectaStr);
                         }
                     }
 
-                    if (columnas.getTipoRutaMapping() != null) {
-                        String tipoRutaStr = getValueFromMapping(row, columnas.getTipoRutaMapping());
+                    if (columnas.getColumna12Mapping() != null) {
+                        String tipoRutaStr = getValueFromMapping(row, columnas.getColumna12Mapping());
                         if (tipoRutaStr != null) {
-                            meliImport.setTipoRuta(tipoRutaStr);
+                            fileImport.setTipoRuta(tipoRutaStr);
                         }
                     }
 
-                    if (columnas.getPalletsMapping() != null) {
-                        String palletsStr = getValueFromMapping(row, columnas.getPalletsMapping());
+                    if (columnas.getColumna15Mapping() != null) {
+                        String palletsStr = getValueFromMapping(row, columnas.getColumna15Mapping());
                         if (palletsStr != null) {
-                            meliImport.setPallets(palletsStr);
+                            fileImport.setPallets(palletsStr);
                         }
                     }
 
-                    if (columnas.getIdParadaMapping() != null) {
-                        String idParadaStr = getValueFromMapping(row, columnas.getIdParadaMapping());
+                    if (columnas.getColumna17Mapping() != null) {
+                        String idParadaStr = getValueFromMapping(row, columnas.getColumna17Mapping());
                         if (idParadaStr != null) {
-                            meliImport.setIdParada(idParadaStr);
+                            fileImport.setIdParada(idParadaStr);
                         }
                     }
 
-                    if (columnas.getParadaMapping() != null) {
-                        String paradaStr = getValueFromMapping(row, columnas.getParadaMapping());
+                    if (columnas.getColumna18Mapping() != null) {
+                        String paradaStr = getValueFromMapping(row, columnas.getColumna18Mapping());
                         if (paradaStr != null) {
-                            meliImport.setParada(paradaStr);
+                            fileImport.setParada(paradaStr);
                         }
                     }
 
-                    if (columnas.getTipoParadaMapping() != null) {
-                        String tipoParadaStr = getValueFromMapping(row, columnas.getTipoParadaMapping());
+                    if (columnas.getColumna19Mapping() != null) {
+                        String tipoParadaStr = getValueFromMapping(row, columnas.getColumna19Mapping());
                         if (tipoParadaStr != null) {
-                            meliImport.setTipoParada(tipoParadaStr);
+                            fileImport.setTipoParada(tipoParadaStr);
                         }
                     }
 
-                    if (columnas.getPuntualidadMapping() != null) {
-                        String puntualidadStr = getValueFromMapping(row, columnas.getPuntualidadMapping());
+                    if (columnas.getColumna20Mapping() != null) {
+                        String puntualidadStr = getValueFromMapping(row, columnas.getColumna20Mapping());
                         if (puntualidadStr != null) {
-                            meliImport.setPuntualidad(puntualidadStr);
+                            fileImport.setPuntualidad(puntualidadStr);
                         }
                     }
 
-                    if (columnas.getTopSellerMapping() != null) {
-                        String topSellerStr = getValueFromMapping(row, columnas.getTopSellerMapping());
+                    if (columnas.getColumna21Mapping() != null) {
+                        String topSellerStr = getValueFromMapping(row, columnas.getColumna21Mapping());
                         if (topSellerStr != null) {
-                            meliImport.setTopSeller(topSellerStr);
+                            fileImport.setTopSeller(topSellerStr);
                         }
                     }
 
-                    if (columnas.getPlanificadoMapping() != null) {
-                        String planificadoStr = getValueFromMapping(row, columnas.getPlanificadoMapping());
+                    if (columnas.getColumna22Mapping() != null) {
+                        String planificadoStr = getValueFromMapping(row, columnas.getColumna22Mapping());
                         if (planificadoStr != null) {
-                            meliImport.setPlanificado(planificadoStr);
+                            fileImport.setPlanificado(planificadoStr);
                         }
                     }
 
-                    if (columnas.getDescripcionMapping() != null) {
-                        String descripcionStr = getValueFromMapping(row, columnas.getDescripcionMapping());
+                    if (columnas.getColumna23Mapping() != null) {
+                        String descripcionStr = getValueFromMapping(row, columnas.getColumna23Mapping());
                         if (descripcionStr != null) {
                             if (descripcionStr.length() > 500) {
                                 descripcionStr = descripcionStr.substring(0, 500);
                             }
-                            meliImport.setDescripcion(descripcionStr);
+                            fileImport.setDescripcion(descripcionStr);
                         }
                     }
 
-                    meliImport.setOperacion(operacion);
-                    meliImport.setArchivoImportacion(fileName);
+                    fileImport.setOperacion(operacion);
+                    fileImport.setArchivoImportacion(fileName);
 
-                    repository.save(meliImport);
+                    repository.save(fileImport);
 
                     processedRows++;
 

@@ -9,8 +9,8 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@Table(name = "ZM_Importacion_MELI")
-public class MeliImport {
+@Table(name = "ZM_Importacion_Archivo")
+public class FileImport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -93,7 +93,7 @@ public class MeliImport {
     @Column(name = "ArchivoImportacion")
     private String archivoImportacion;
 
-    public MeliImport(Integer id, String rutaMeli, String rutaReferencia, Date fechaInicioPlan, Date fechaFinPlan, String tipoVehiculo, String vehiculoID, String patenteVehiculoTractor, String patenteVehiculoCarga1, String conductorId, String depositoSalida, String depositoLlegada, String tipoColecta, String tipoRuta, String peso, String volumen, String pallets, Integer paquetes, String idParada, String parada, String tipoParada, String puntualidad, String topSeller, String planificado, String descripcion, String operacion, String archivoImportacion) {
+    public FileImport(Integer id, String rutaMeli, String rutaReferencia, Date fechaInicioPlan, Date fechaFinPlan, String tipoVehiculo, String vehiculoID, String patenteVehiculoTractor, String patenteVehiculoCarga1, String conductorId, String depositoSalida, String depositoLlegada, String tipoColecta, String tipoRuta, String peso, String volumen, String pallets, Integer paquetes, String idParada, String parada, String tipoParada, String puntualidad, String topSeller, String planificado, String descripcion, String operacion, String archivoImportacion) {
         this.id = id;
         this.rutaMeli = rutaMeli;
         this.rutaReferencia = rutaReferencia;
@@ -123,7 +123,7 @@ public class MeliImport {
         this.archivoImportacion = archivoImportacion;
     }
 
-    public MeliImport() {
+    public FileImport() {
 
     }
 }
