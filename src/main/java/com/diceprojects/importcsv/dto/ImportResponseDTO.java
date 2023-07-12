@@ -1,4 +1,4 @@
-package com.diceprojects.importcsvmeli.dto;
+package com.diceprojects.importcsv.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.diceprojects.importcsvmeli.persistences.models;
+package com.diceprojects.importcsv.persistences.models;
 
 import lombok.Getter;
 import lombok.Setter;

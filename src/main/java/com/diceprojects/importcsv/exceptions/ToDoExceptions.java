@@ -1,7 +1,6 @@
-package com.diceprojects.importcsvmeli.exceptions;
+package com.diceprojects.importcsv.exceptions;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
 
 

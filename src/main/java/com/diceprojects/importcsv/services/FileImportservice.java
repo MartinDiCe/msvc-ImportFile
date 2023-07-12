@@ -1,6 +1,6 @@
-package com.diceprojects.importcsvmeli.services;
+package com.diceprojects.importcsv.services;
 
-import com.diceprojects.importcsvmeli.dto.ImportResponseDTO;
+import com.diceprojects.importcsv.dto.ImportResponseDTO;
 
 import java.util.List;
 

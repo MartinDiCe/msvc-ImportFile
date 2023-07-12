@@ -1,6 +1,6 @@
-package com.diceprojects.importcsvmeli.services;
+package com.diceprojects.importcsv.services;
 
-import com.diceprojects.importcsvmeli.dto.ImportResponseDTO;
+import com.diceprojects.importcsv.dto.ImportResponseDTO;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -14,11 +14,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import com.diceprojects.importcsvmeli.exceptions.ColumnasNoEncontradasException;
-import com.diceprojects.importcsvmeli.persistences.models.Columnas;
-import com.diceprojects.importcsvmeli.persistences.models.FileImport;
-import com.diceprojects.importcsvmeli.persistences.repositories.ColumnasRepository;
-import com.diceprojects.importcsvmeli.persistences.repositories.FileImportRepository;
+import com.diceprojects.importcsv.exceptions.ColumnasNoEncontradasException;
+import com.diceprojects.importcsv.persistences.models.Columnas;
+import com.diceprojects.importcsv.persistences.models.FileImport;
+import com.diceprojects.importcsv.persistences.repositories.ColumnasRepository;
+import com.diceprojects.importcsv.persistences.repositories.FileImportRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

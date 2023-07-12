@@ -1,4 +1,4 @@
-package com.diceprojects.importcsvmeli.exceptions;
+package com.diceprojects.importcsv.exceptions;
 
 public class ErrorResponse {
     private String mensaje;
