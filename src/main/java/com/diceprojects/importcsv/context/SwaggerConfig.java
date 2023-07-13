@@ -1,4 +1,4 @@
-package com.diceprojects.importcsvmeli.context;
+package com.diceprojects.importcsv.context;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
