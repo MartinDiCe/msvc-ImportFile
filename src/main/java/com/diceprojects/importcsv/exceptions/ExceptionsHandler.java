@@ -22,10 +22,10 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
     }
 
-    @ExceptionHandler(ColumnasNoEncontradasException.class)
+    @ExceptionHandler(ColumnsNoEncontradasException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleColumnasNoEncontradas(ColumnasNoEncontradasException ex) {
-        String mensaje = "No existe configuración de las columnas del archivo para la operación " + ex.getOperacion();
+    public ErrorResponse handleColumnsNoEncontradas(ColumnsNoEncontradasException ex) {
+        String mensaje = "No existe configuración de las columns del archivo para la operación " + ex.getOperacion();
         return new ErrorResponse(mensaje);
     }
 

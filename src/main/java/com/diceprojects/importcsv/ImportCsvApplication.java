@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories("com.diceprojects.importcsv.persistences.repositories")
-@EntityScan("com.diceprojects.importcsvmeli.persistences.models")
+@EntityScan("com.diceprojects.importcsv.persistences.models")
 public class ImportCsvApplication {
 
     public static void main(String[] args) {

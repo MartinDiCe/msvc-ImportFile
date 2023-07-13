@@ -1,127 +1,158 @@
 package com.diceprojects.importcsv.persistences.models;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
-import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "ZM_Importacion_Archivo")
+@Table(name = "importacion_archivo")
 public class FileImport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "RutaMeli")
-    private String rutaMeli;
+    @Column(name = "column_table0", length = 1000)
+    private String columnTable0;
 
-    @Column(name = "RutaReferencia")
-    private String rutaReferencia;
+    @Column(name = "column_table1", length = 1000)
+    private String columnTable1;
 
-    @Column(name = "FechaInicioPlan")
-    private Date fechaInicioPlan;
+    @Column(name = "column_table2", length = 1000)
+    private String columnTable2;
 
-    @Column(name = "FechaFinPlan")
-    private Date fechaFinPlan;
+    @Column(name = "column_table3", length = 1000)
+    private String columnTable3;
 
-    @Column(name = "TipoVehiculo")
-    private String tipoVehiculo;
+    @Column(name = "column_table4", length = 1000)
+    private String columnTable4;
 
-    @Column(name = "VehiculoID")
-    private String vehiculoID;
+    @Column(name = "column_table5", length = 1000)
+    private String columnTable5;
 
-    @Column(name = "PatenteVehiculoTractor")
-    private String patenteVehiculoTractor;
+    @Column(name = "column_table6", length = 1000)
+    private String columnTable6;
 
-    @Column(name = "PatenteVehiculoCarga1")
-    private String patenteVehiculoCarga1;
+    @Column(name = "column_table7", length = 1000)
+    private String columnTable7;
 
-    @Column(name = "ConductorId")
-    private String conductorId;
+    @Column(name = "column_table8", length = 1000)
+    private String columnTable8;
 
-    @Column(name = "DepositoSalida")
-    private String depositoSalida;
+    @Column(name = "column_table9", length = 1000)
+    private String columnTable9;
 
-    @Column(name = "DepositoLlegada")
-    private String depositoLlegada;
+    @Column(name = "column_table10", length = 1000)
+    private String columnTable10;
 
-    @Column(name = "TipoColecta")
-    private String tipoColecta;
+    @Column(name = "column_table11", length = 1000)
+    private String columnTable11;
 
-    @Column(name = "TipoRuta")
-    private String tipoRuta;
+    @Column(name = "column_table12", length = 1000)
+    private String columnTable12;
 
-    @Column(name = "Peso")
-    private String peso;
+    @Column(name = "column_table13", length = 1000)
+    private String columnTable13;
 
-    @Column(name = "Volumen")
-    private String volumen;
+    @Column(name = "column_table14", length = 1000)
+    private String columnTable14;
 
-    @Column(name = "Pallets")
-    private String pallets;
+    @Column(name = "column_table15", length = 1000)
+    private String columnTable15;
 
-    @Column(name = "Paquetes")
-    private Integer paquetes;
+    @Column(name = "column_table16", length = 1000)
+    private String columnTable16;
 
-    @Column(name = "IdParada")
-    private String idParada;
+    @Column(name = "column_table17", length = 1000)
+    private String columnTable17;
 
-    @Column(name = "Parada")
-    private String parada;
+    @Column(name = "column_table18", length = 1000)
+    private String columnTable18;
 
-    @Column(name = "TipoParada")
-    private String tipoParada;
+    @Column(name = "column_table19", length = 1000)
+    private String columnTable19;
 
-    @Column(name = "Puntualidad")
-    private String puntualidad;
+    @Column(name = "column_table20", length = 1000)
+    private String columnTable20;
 
-    @Column(name = "TOPSeller")
-    private String topSeller;
+    @Column(name = "column_table21", length = 1000)
+    private String columnTable21;
 
-    @Column(name = "Planificado")
-    private String planificado;
+    @Column(name = "column_table22", length = 1000)
+    private String columnTable22;
 
-    @Column(name = "Descripcion", length = 500)
-    private String descripcion;
+    @Column(name = "column_table23", length = 1000)
+    private String columnTable23;
 
-    @Column(name = "Operacion")
-    private String operacion;
+    @Column(name = "column_table24", length = 1000)
+    private String columnTable24;
 
-    @Column(name = "ArchivoImportacion")
+    @Column(name = "column_table25", length = 1000)
+    private String columnTable25;
+
+    @Column(name = "column_table26", length = 1000)
+    private String columnTable26;
+
+    @Column(name = "column_table27", length = 1000)
+    private String columnTable27;
+
+    @Column(name = "column_table28", length = 1000)
+    private String columnTable28;
+
+    @Column(name = "column_table29", length = 1000)
+    private String columnTable29;
+
+    @Column(name = "column_table30", length = 1000)
+    private String columnTable30;
+
+    @Column(name = "column_table31", length = 1000)
+    private String columnTable31;
+
+    @Column(name = "column_table32", length = 1000)
+    private String columnTable32;
+
+    @Column(name = "column_table33", length = 1000)
+    private String columnTable33;
+
+    @Column(name = "column_table34", length = 1000)
+    private String columnTable34;
+
+    @Column(name = "column_table35", length = 1000)
+    private String columnTable35;
+
+    @Column(name = "column_table36", length = 1000)
+    private String columnTable36;
+
+    @Column(name = "column_table37", length = 1000)
+    private String columnTable37;
+
+    @Column(name = "column_table38", length = 1000)
+    private String columnTable38;
+
+    @Column(name = "column_table39", length = 1000)
+    private String columnTable39;
+
+    @Column(name = "column_table40", length = 1000)
+    private String columnTable40;
+
+    @Column(name = "operacion_proceso")
+    @NotNull
+    private String operacionProceso;
+
+    @Column(name = "tipo_operacion_proceso")
+    @NotNull
+    private String tipoOperacion;
+
+    @Column(name = "tipo_entidad")
+    @NotNull
+    private String tipoEntidad;
+
+    @Column(name = "archivo_importacion")
+    @NotNull
     private String archivoImportacion;
-
-    public FileImport(Integer id, String rutaMeli, String rutaReferencia, Date fechaInicioPlan, Date fechaFinPlan, String tipoVehiculo, String vehiculoID, String patenteVehiculoTractor, String patenteVehiculoCarga1, String conductorId, String depositoSalida, String depositoLlegada, String tipoColecta, String tipoRuta, String peso, String volumen, String pallets, Integer paquetes, String idParada, String parada, String tipoParada, String puntualidad, String topSeller, String planificado, String descripcion, String operacion, String archivoImportacion) {
-        this.id = id;
-        this.rutaMeli = rutaMeli;
-        this.rutaReferencia = rutaReferencia;
-        this.fechaInicioPlan = fechaInicioPlan;
-        this.fechaFinPlan = fechaFinPlan;
-        this.tipoVehiculo = tipoVehiculo;
-        this.vehiculoID = vehiculoID;
-        this.patenteVehiculoTractor = patenteVehiculoTractor;
-        this.patenteVehiculoCarga1 = patenteVehiculoCarga1;
-        this.conductorId = conductorId;
-        this.depositoSalida = depositoSalida;
-        this.depositoLlegada = depositoLlegada;
-        this.tipoColecta = tipoColecta;
-        this.tipoRuta = tipoRuta;
-        this.peso = peso;
-        this.volumen = volumen;
-        this.pallets = pallets;
-        this.paquetes = paquetes;
-        this.idParada = idParada;
-        this.parada = parada;
-        this.tipoParada = tipoParada;
-        this.puntualidad = puntualidad;
-        this.topSeller = topSeller;
-        this.planificado = planificado;
-        this.descripcion = descripcion;
-        this.operacion = operacion;
-        this.archivoImportacion = archivoImportacion;
-    }
 
     public FileImport() {
 

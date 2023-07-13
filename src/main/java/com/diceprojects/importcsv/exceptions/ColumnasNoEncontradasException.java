@@ -1,9 +1,9 @@
 package com.diceprojects.importcsv.exceptions;
 
-public class ColumnasNoEncontradasException extends RuntimeException {
+public class ColumnsNoEncontradasException extends RuntimeException {
     private String operacion;
 
-    public ColumnasNoEncontradasException(String operacion) {
+    public ColumnsNoEncontradasException(String operacion) {
         this.operacion = operacion;
     }
 
