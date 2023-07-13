@@ -138,17 +138,9 @@ public class FileImport {
     @Column(name = "column_table40", length = 1000)
     private String columnTable40;
 
-    @Column(name = "operacion_proceso")
-    @NotNull
-    private String operacionProceso;
-
-    @Column(name = "tipo_operacion_proceso")
-    @NotNull
-    private String tipoOperacion;
-
-    @Column(name = "tipo_entidad")
-    @NotNull
-    private String tipoEntidad;
+    @ManyToOne
+    @JoinColumn(name = "columns_id")
+    private Columns columnsId;
 
     @Column(name = "archivo_importacion")
     @NotNull

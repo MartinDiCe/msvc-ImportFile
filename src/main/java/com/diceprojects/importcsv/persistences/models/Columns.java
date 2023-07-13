@@ -265,6 +265,9 @@ public class Columns {
     @NotNull
     private char delimitadorArchivoMapping;
 
+    @Column(name = "file_start")
+    private String startFile;
+
     @Column(name = "operacion_proceso")
     @NotNull
     private String operacionProcesoMapping;

@@ -41,12 +41,10 @@ public class FileImportserviceImplement implements FileImportservice {
                 .append(fileName)
                 .toString();
 
-        String operacion = getOperacionFromFileName(fileName);
-
-        Columns columns = columnsRepository.findByOperacionProcesoMapping(operacion);
+        Columns columns = getConfigColumnFromFileName(fileName);
 
         if (columns == null) {
-            throw new ColumnsNoEncontradasException(operacion);
+            throw new ColumnsNoEncontradasException(fileName);
         }
 
         FileImport existingImport = repository.findFirstByArchivoImportacion(fileName);
@@ -478,7 +476,7 @@ public class FileImportserviceImplement implements FileImportservice {
                         }
                     }
 
-                    fileImport.setOperacionProceso(operacion);
+                    fileImport.setColumnsId(columns);
                     fileImport.setArchivoImportacion(fileName);
 
                     repository.save(fileImport);
@@ -547,15 +545,16 @@ public class FileImportserviceImplement implements FileImportservice {
         throw new ResponseStatusException(HttpStatus.NO_CONTENT, "El formato de fecha no coincide con el esperado (yyyy-MM-dd o dd/MM/yyyy).");
     }
 
-    public String getOperacionFromFileName(String fileName) {
-        if (fileName.toLowerCase().startsWith("col")) {
-            return "13";
-        } else if (fileName.toLowerCase().startsWith("lh")) {
-            return "16";
-        } else if (fileName.toLowerCase().startsWith("del")) {
-            return "20";
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre de archivo no corresponde al esperado col%, del% o lh%. Ejemplo: col202307071644");
+    public Columns getConfigColumnFromFileName(String fileName) {
+        List<Columns> allColumns = columnsRepository.findAll();
+
+        for (Columns column : allColumns) {
+            if (fileName.toLowerCase().startsWith(column.getStartFile().toLowerCase())) {
+                return column;
+            }
         }
+
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre de archivo no corresponde a ninguna configuración de importación");
     }
+
 }

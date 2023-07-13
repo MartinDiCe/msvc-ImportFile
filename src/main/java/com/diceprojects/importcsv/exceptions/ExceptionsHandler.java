@@ -25,7 +25,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ColumnsNoEncontradasException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleColumnsNoEncontradas(ColumnsNoEncontradasException ex) {
-        String mensaje = "No existe configuración de las columns del archivo para la operación " + ex.getOperacion();
+        String mensaje = "No existe configuración de las columns del archivo para la operación " + ex.getFileName();
         return new ErrorResponse(mensaje);
     }
 

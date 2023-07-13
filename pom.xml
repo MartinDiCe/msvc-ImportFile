@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.diceprojects</groupId>
-    <artifactId>ImportCSV</artifactId>
+    <artifactId>msvc-ImportCSV</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ImportCSVMELI</name>
     <description>ImportCSV</description>
