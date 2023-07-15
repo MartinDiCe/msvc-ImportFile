@@ -1,6 +1,6 @@
 package com.diceprojects.importcsv.persistences.repositories;
 
-import com.diceprojects.importcsv.persistences.models.FileImport;
+import com.diceprojects.importcsv.persistences.models.entities.FileImport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

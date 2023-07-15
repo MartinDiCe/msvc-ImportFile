@@ -1,5 +1,6 @@
-package com.diceprojects.importcsv.persistences.models;
+package com.diceprojects.importcsv.persistences.models.entities;
 
+import com.diceprojects.importcsv.persistences.models.Columns;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +10,7 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "importacion_archivo")
+@Table(name = "files_import")
 public class FileImport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -138,9 +139,8 @@ public class FileImport {
     @Column(name = "column_table40", length = 1000)
     private String columnTable40;
 
-    @ManyToOne
-    @JoinColumn(name = "columns_id")
-    private Columns columnsId;
+    @Column(name = "columns_id")
+    private Long columnsId;
 
     @Column(name = "archivo_importacion")
     @NotNull
