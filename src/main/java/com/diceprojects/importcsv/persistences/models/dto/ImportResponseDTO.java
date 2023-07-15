@@ -1,4 +1,4 @@
-package com.diceprojects.importcsv.dto;
+package com.diceprojects.importcsv.persistences.models.dto;
 
 import lombok.Getter;
 import lombok.Setter;

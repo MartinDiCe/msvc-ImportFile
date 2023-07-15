@@ -1,7 +1,7 @@
 package com.diceprojects.importcsv.services;
 
 import com.diceprojects.importcsv.clients.ColumnsClientRestApi;
-import com.diceprojects.importcsv.dto.ImportResponseDTO;
+import com.diceprojects.importcsv.persistences.models.dto.ImportResponseDTO;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -14,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+
 import com.diceprojects.importcsv.exceptions.ColumnsNoEncontradasException;
 import com.diceprojects.importcsv.persistences.models.Columns;
 import com.diceprojects.importcsv.persistences.models.entities.FileImport;
@@ -33,7 +35,8 @@ public class FileImportserviceImplement implements FileImportservice {
     }
 
     @Override
-    public ImportResponseDTO importFile(String filePath, String fileName) {
+    public Optional<ImportResponseDTO> importFile(String filePath, String fileName) {
+
         String file = new StringBuilder()
                 .append(filePath)
                 .append(fileName)
@@ -484,18 +487,20 @@ public class FileImportserviceImplement implements FileImportservice {
                         processedRows++;
 
                     } catch (Exception e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
+                        throw new ResponseStatusException(HttpStatus
+                                .INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
                     }
                 }
             } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
+                throw new ResponseStatusException(HttpStatus
+                        .INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
             }
 
             ImportResponseDTO response = new ImportResponseDTO();
             response.setStatus("200");
             response.setTitle("Importación exitosa");
             response.setDetail("Cantidad de lineas leídas: " + processedRows);
-            return response;
+            return Optional.of(response);
 
         }
             catch (FeignException e){
@@ -529,15 +534,19 @@ public class FileImportserviceImplement implements FileImportservice {
 
 
     public String getValueFromMapping(String[] row, int columnIndex) {
+
         try {
             if (columnIndex >= 0 && columnIndex < row.length) {
                 return row[columnIndex];
             } else {
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Las filas y la configuración de lectura de archivo no coinciden");
+                throw new ResponseStatusException(HttpStatus
+                        .NO_CONTENT, "Las filas y la configuración de lectura de archivo no coinciden");
             }
         } catch (IndexOutOfBoundsException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al leer las columns de una fila", e);
+            throw new ResponseStatusException(HttpStatus
+                    .INTERNAL_SERVER_ERROR, "Error al leer las columns de una fila", e);
         }
+
     }
 
     public Columns getConfigColumnFromFileName(String fileName) {
@@ -548,7 +557,10 @@ public class FileImportserviceImplement implements FileImportservice {
 
             if (allColumns != null) {
                 for (Columns column : allColumns) {
-                    if (fileName.toLowerCase().startsWith(column.getStartFile().toLowerCase())) {
+                    if (fileName.toLowerCase()
+                            .startsWith(column
+                                    .getStartFile()
+                                    .toLowerCase())) {
                         return column;
                     }
                 }

@@ -1,11 +1,13 @@
 package com.diceprojects.importcsv.controllers;
 
-import com.diceprojects.importcsv.dto.ImportResponseDTO;
+import com.diceprojects.importcsv.persistences.models.dto.ImportResponseDTO;
 import com.diceprojects.importcsv.services.FileImportservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @CrossOrigin("*")
 @RestController
@@ -19,12 +21,22 @@ public class FileImportController {
     }
 
     @PostMapping("/process")
-    public ResponseEntity<ImportResponseDTO> importFile(
+    public ResponseEntity<?> importFile(
             @RequestParam("filePath") String filePath,
             @RequestParam("fileName") String fileName
     ) {
-        ImportResponseDTO result = fileImportService.importFile(filePath, fileName);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+
+            Optional<ImportResponseDTO> o = fileImportService.importFile(filePath, fileName);
+
+            if (o.isEmpty()) {
+                return ResponseEntity.status(HttpStatus
+                        .NO_CONTENT).build();
+            }
+
+
+            return ResponseEntity.status(HttpStatus
+                    .OK).build();
+
     }
 
 

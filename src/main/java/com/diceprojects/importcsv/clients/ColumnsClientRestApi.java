@@ -14,8 +14,8 @@ public interface ColumnsClientRestApi {
     @GetMapping("/get-config-columns")
     ResponseEntity<Columns> getConfigColumnFromFileName(@RequestParam("fileName") String fileName);
     @GetMapping("/list-all-columns")
-    public ResponseEntity <List<Columns>> listAllColumns();
+    ResponseEntity <List<Columns>> listAllColumns();
     @GetMapping("/find-columns_by_operacion")
-    public ResponseEntity <Columns> findByOperacionProcesoMapping(@RequestParam("operacion") String operacion);
+    ResponseEntity <Columns> findByOperacionProcesoMapping(@RequestParam("operacion") String operacion);
 
 }

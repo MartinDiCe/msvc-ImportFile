@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "importacion_archivo")
+@Table(name = "files_import")
 public class FileImport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
