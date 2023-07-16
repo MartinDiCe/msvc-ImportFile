@@ -1,4 +1,4 @@
-package com.diceprojects.msvccolumns.exceptions;
+package com.diceprojects.importcsv.exceptions;
 
 import lombok.Data;
 
