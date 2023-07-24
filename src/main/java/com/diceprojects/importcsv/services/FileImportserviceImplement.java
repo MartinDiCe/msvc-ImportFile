@@ -1,14 +1,15 @@
 package com.diceprojects.importcsv.services;
 
 import com.diceprojects.importcsv.clients.ColumnsClientRestApi;
+import com.diceprojects.importcsv.persistences.models.FileColumnsHeader;
 import com.diceprojects.importcsv.persistences.models.dto.ImportResponseDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.FileReader;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.diceprojects.importcsv.exceptions.ColumnsNoEncontradasException;
-import com.diceprojects.importcsv.persistences.models.Columns;
 import com.diceprojects.importcsv.persistences.models.entities.FileImport;
 import com.diceprojects.importcsv.persistences.repositories.FileImportRepository;
 import org.springframework.stereotype.Service;
@@ -28,10 +28,12 @@ public class FileImportserviceImplement implements FileImportservice {
 
     private final FileImportRepository repository;
     private final ColumnsClientRestApi columnClient;
+    private final ObjectMapper objectMapper;
 
-    public FileImportserviceImplement(FileImportRepository repository, ColumnsClientRestApi columnClient) {
+    public FileImportserviceImplement(FileImportRepository repository, ColumnsClientRestApi columnClient, ObjectMapper objectMapper) {
         this.repository = repository;
         this.columnClient = columnClient;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -43,9 +45,9 @@ public class FileImportserviceImplement implements FileImportservice {
                 .toString();
 
         try {
-            Columns columns = columnClient.getConfigColumnFromFileName(fileName).getBody();
+            FileColumnsHeader fileColumns = columnClient.getConfigColumnFromFileName(fileName);
 
-            if (columns == null) {
+            if (fileColumns == null) {
                 throw new ColumnsNoEncontradasException(fileName);
             }
 
@@ -55,7 +57,7 @@ public class FileImportserviceImplement implements FileImportservice {
                         CONFLICT, "El archivo '" + fileName + "' ya ha sido importado anteriormente.");
             }
 
-            List<String[]> rows = readCSVFile(file, columns.getDelimitadorArchivoMapping());
+            List<String[]> rows = readCSVFile(file, fileColumns.getDelimitadorArchivoMapping());
             int processedRows = 0;
 
             try {
@@ -69,8 +71,8 @@ public class FileImportserviceImplement implements FileImportservice {
                     try {
                         FileImport fileImport = new FileImport();
 
-                        if (columns.getColumn0Mapping() != null) {
-                            String column0Str = getValueFromMapping(row, columns.getColumn0Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn0Mapping() != null) {
+                            String column0Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn0Mapping());
                             if (column0Str != null) {
                                 if (column0Str.length() > 1000) {
                                     column0Str = column0Str.substring(0, 1000);
@@ -79,8 +81,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn1Mapping() != null) {
-                            String column1Str = getValueFromMapping(row, columns.getColumn1Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn1Mapping() != null) {
+                            String column1Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn1Mapping());
                             if (column1Str != null) {
                                 if (column1Str.length() > 1000) {
                                     column1Str = column1Str.substring(0, 1000);
@@ -89,8 +91,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn2Mapping() != null) {
-                            String column2Str = getValueFromMapping(row, columns.getColumn2Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn2Mapping() != null) {
+                            String column2Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn2Mapping());
                             if (column2Str != null) {
                                 if (column2Str.length() > 1000) {
                                     column2Str = column2Str.substring(0, 1000);
@@ -99,8 +101,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn3Mapping() != null) {
-                            String column3Str = getValueFromMapping(row, columns.getColumn3Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn3Mapping() != null) {
+                            String column3Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn3Mapping());
                             if (column3Str != null) {
                                 if (column3Str.length() > 1000) {
                                     column3Str = column3Str.substring(0, 1000);
@@ -109,8 +111,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn4Mapping() != null) {
-                            String column4Str = getValueFromMapping(row, columns.getColumn4Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn4Mapping() != null) {
+                            String column4Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn4Mapping());
                             if (column4Str != null) {
                                 if (column4Str.length() > 1000) {
                                     column4Str = column4Str.substring(0, 1000);
@@ -119,8 +121,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn5Mapping() != null) {
-                            String column5Str = getValueFromMapping(row, columns.getColumn5Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn5Mapping() != null) {
+                            String column5Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn5Mapping());
                             if (column5Str != null) {
                                 if (column5Str.length() > 1000) {
                                     column5Str = column5Str.substring(0, 1000);
@@ -129,8 +131,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn6Mapping() != null) {
-                            String column6Str = getValueFromMapping(row, columns.getColumn6Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn6Mapping() != null) {
+                            String column6Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn6Mapping());
                             if (column6Str != null) {
                                 if (column6Str.length() > 1000) {
                                     column6Str = column6Str.substring(0, 1000);
@@ -139,8 +141,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn7Mapping() != null) {
-                            String column7Str = getValueFromMapping(row, columns.getColumn7Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn7Mapping() != null) {
+                            String column7Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn7Mapping());
                             if (column7Str != null) {
                                 if (column7Str.length() > 1000) {
                                     column7Str = column7Str.substring(0, 1000);
@@ -149,8 +151,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn8Mapping() != null) {
-                            String column8Str = getValueFromMapping(row, columns.getColumn8Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn8Mapping() != null) {
+                            String column8Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn8Mapping());
                             if (column8Str != null) {
                                 if (column8Str.length() > 1000) {
                                     column8Str = column8Str.substring(0, 1000);
@@ -159,8 +161,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn9Mapping() != null) {
-                            String column9Str = getValueFromMapping(row, columns.getColumn9Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn9Mapping() != null) {
+                            String column9Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn9Mapping());
                             if (column9Str != null) {
                                 if (column9Str.length() > 1000) {
                                     column9Str = column9Str.substring(0, 1000);
@@ -169,8 +171,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn10Mapping() != null) {
-                            String column10Str = getValueFromMapping(row, columns.getColumn10Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn10Mapping() != null) {
+                            String column10Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn10Mapping());
                             if (column10Str != null) {
                                 if (column10Str.length() > 1000) {
                                     column10Str = column10Str.substring(0, 1000);
@@ -179,8 +181,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn11Mapping() != null) {
-                            String column11Str = getValueFromMapping(row, columns.getColumn11Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn11Mapping() != null) {
+                            String column11Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn11Mapping());
                             if (column11Str != null) {
                                 if (column11Str.length() > 1000) {
                                     column11Str = column11Str.substring(0, 1000);
@@ -189,8 +191,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn12Mapping() != null) {
-                            String column12Str = getValueFromMapping(row, columns.getColumn12Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn12Mapping() != null) {
+                            String column12Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn12Mapping());
                             if (column12Str != null) {
                                 if (column12Str.length() > 1000) {
                                     column12Str = column12Str.substring(0, 1000);
@@ -199,8 +201,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn13Mapping() != null) {
-                            String column13Str = getValueFromMapping(row, columns.getColumn13Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn13Mapping() != null) {
+                            String column13Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn13Mapping());
                             if (column13Str != null) {
                                 if (column13Str.length() > 1000) {
                                     column13Str = column13Str.substring(0, 1000);
@@ -209,8 +211,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn14Mapping() != null) {
-                            String column14Str = getValueFromMapping(row, columns.getColumn14Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn14Mapping() != null) {
+                            String column14Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn14Mapping());
                             if (column14Str != null) {
                                 if (column14Str.length() > 1000) {
                                     column14Str = column14Str.substring(0, 1000);
@@ -219,8 +221,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn15Mapping() != null) {
-                            String column15Str = getValueFromMapping(row, columns.getColumn15Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn15Mapping() != null) {
+                            String column15Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn15Mapping());
                             if (column15Str != null) {
                                 if (column15Str.length() > 1000) {
                                     column15Str = column15Str.substring(0, 1000);
@@ -229,8 +231,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn16Mapping() != null) {
-                            String column16Str = getValueFromMapping(row, columns.getColumn16Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn16Mapping() != null) {
+                            String column16Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn16Mapping());
                             if (column16Str != null) {
                                 if (column16Str.length() > 1000) {
                                     column16Str = column16Str.substring(0, 1000);
@@ -239,8 +241,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn17Mapping() != null) {
-                            String column17Str = getValueFromMapping(row, columns.getColumn17Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn17Mapping() != null) {
+                            String column17Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn17Mapping());
                             if (column17Str != null) {
                                 if (column17Str.length() > 1000) {
                                     column17Str = column17Str.substring(0, 1000);
@@ -249,8 +251,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn18Mapping() != null) {
-                            String column18Str = getValueFromMapping(row, columns.getColumn18Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn18Mapping() != null) {
+                            String column18Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn18Mapping());
                             if (column18Str != null) {
                                 if (column18Str.length() > 1000) {
                                     column18Str = column18Str.substring(0, 1000);
@@ -259,8 +261,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn19Mapping() != null) {
-                            String column19Str = getValueFromMapping(row, columns.getColumn19Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn19Mapping() != null) {
+                            String column19Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn19Mapping());
                             if (column19Str != null) {
                                 if (column19Str.length() > 1000) {
                                     column19Str = column19Str.substring(0, 1000);
@@ -269,8 +271,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn20Mapping() != null) {
-                            String column20Str = getValueFromMapping(row, columns.getColumn20Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn20Mapping() != null) {
+                            String column20Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn20Mapping());
                             if (column20Str != null) {
                                 if (column20Str.length() > 1000) {
                                     column20Str = column20Str.substring(0, 1000);
@@ -279,8 +281,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn21Mapping() != null) {
-                            String column21Str = getValueFromMapping(row, columns.getColumn21Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn21Mapping() != null) {
+                            String column21Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn21Mapping());
                             if (column21Str != null) {
                                 if (column21Str.length() > 1000) {
                                     column21Str = column21Str.substring(0, 1000);
@@ -289,8 +291,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn22Mapping() != null) {
-                            String column22Str = getValueFromMapping(row, columns.getColumn22Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn22Mapping() != null) {
+                            String column22Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn22Mapping());
                             if (column22Str != null) {
                                 if (column22Str.length() > 1000) {
                                     column22Str = column22Str.substring(0, 1000);
@@ -299,8 +301,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn23Mapping() != null) {
-                            String column23Str = getValueFromMapping(row, columns.getColumn23Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn23Mapping() != null) {
+                            String column23Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn23Mapping());
                             if (column23Str != null) {
                                 if (column23Str.length() > 1000) {
                                     column23Str = column23Str.substring(0, 1000);
@@ -309,8 +311,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn24Mapping() != null) {
-                            String column24Str = getValueFromMapping(row, columns.getColumn24Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn24Mapping() != null) {
+                            String column24Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn24Mapping());
                             if (column24Str != null) {
                                 if (column24Str.length() > 1000) {
                                     column24Str = column24Str.substring(0, 1000);
@@ -319,8 +321,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn25Mapping() != null) {
-                            String column25Str = getValueFromMapping(row, columns.getColumn25Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn25Mapping() != null) {
+                            String column25Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn25Mapping());
                             if (column25Str != null) {
                                 if (column25Str.length() > 1000) {
                                     column25Str = column25Str.substring(0, 1000);
@@ -329,8 +331,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn26Mapping() != null) {
-                            String column26Str = getValueFromMapping(row, columns.getColumn26Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn26Mapping() != null) {
+                            String column26Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn26Mapping());
                             if (column26Str != null) {
                                 if (column26Str.length() > 1000) {
                                     column26Str = column26Str.substring(0, 1000);
@@ -339,8 +341,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn27Mapping() != null) {
-                            String column27Str = getValueFromMapping(row, columns.getColumn27Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn27Mapping() != null) {
+                            String column27Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn27Mapping());
                             if (column27Str != null) {
                                 if (column27Str.length() > 1000) {
                                     column27Str = column27Str.substring(0, 1000);
@@ -349,8 +351,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn28Mapping() != null) {
-                            String column28Str = getValueFromMapping(row, columns.getColumn28Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn28Mapping() != null) {
+                            String column28Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn28Mapping());
                             if (column28Str != null) {
                                 if (column28Str.length() > 1000) {
                                     column28Str = column28Str.substring(0, 1000);
@@ -359,8 +361,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn29Mapping() != null) {
-                            String column29Str = getValueFromMapping(row, columns.getColumn29Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn29Mapping() != null) {
+                            String column29Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn29Mapping());
                             if (column29Str != null) {
                                 if (column29Str.length() > 1000) {
                                     column29Str = column29Str.substring(0, 1000);
@@ -369,8 +371,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn30Mapping() != null) {
-                            String column30Str = getValueFromMapping(row, columns.getColumn30Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn30Mapping() != null) {
+                            String column30Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn30Mapping());
                             if (column30Str != null) {
                                 if (column30Str.length() > 1000) {
                                     column30Str = column30Str.substring(0, 1000);
@@ -379,8 +381,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn31Mapping() != null) {
-                            String column31Str = getValueFromMapping(row, columns.getColumn31Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn31Mapping() != null) {
+                            String column31Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn31Mapping());
                             if (column31Str != null) {
                                 if (column31Str.length() > 1000) {
                                     column31Str = column31Str.substring(0, 1000);
@@ -389,8 +391,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn32Mapping() != null) {
-                            String column32Str = getValueFromMapping(row, columns.getColumn32Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn32Mapping() != null) {
+                            String column32Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn32Mapping());
                             if (column32Str != null) {
                                 if (column32Str.length() > 1000) {
                                     column32Str = column32Str.substring(0, 1000);
@@ -399,8 +401,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn33Mapping() != null) {
-                            String column33Str = getValueFromMapping(row, columns.getColumn33Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn33Mapping() != null) {
+                            String column33Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn33Mapping());
                             if (column33Str != null) {
                                 if (column33Str.length() > 1000) {
                                     column33Str = column33Str.substring(0, 1000);
@@ -409,8 +411,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn34Mapping() != null) {
-                            String column34Str = getValueFromMapping(row, columns.getColumn34Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn34Mapping() != null) {
+                            String column34Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn34Mapping());
                             if (column34Str != null) {
                                 if (column34Str.length() > 1000) {
                                     column34Str = column34Str.substring(0, 1000);
@@ -419,8 +421,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn35Mapping() != null) {
-                            String column35Str = getValueFromMapping(row, columns.getColumn35Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn35Mapping() != null) {
+                            String column35Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn35Mapping());
                             if (column35Str != null) {
                                 if (column35Str.length() > 1000) {
                                     column35Str = column35Str.substring(0, 1000);
@@ -429,8 +431,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn36Mapping() != null) {
-                            String column36Str = getValueFromMapping(row, columns.getColumn36Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn36Mapping() != null) {
+                            String column36Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn36Mapping());
                             if (column36Str != null) {
                                 if (column36Str.length() > 1000) {
                                     column36Str = column36Str.substring(0, 1000);
@@ -439,8 +441,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn37Mapping() != null) {
-                            String column37Str = getValueFromMapping(row, columns.getColumn37Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn37Mapping() != null) {
+                            String column37Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn37Mapping());
                             if (column37Str != null) {
                                 if (column37Str.length() > 1000) {
                                     column37Str = column37Str.substring(0, 1000);
@@ -449,8 +451,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn38Mapping() != null) {
-                            String column38Str = getValueFromMapping(row, columns.getColumn38Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn38Mapping() != null) {
+                            String column38Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn38Mapping());
                             if (column38Str != null) {
                                 if (column38Str.length() > 1000) {
                                     column38Str = column38Str.substring(0, 1000);
@@ -459,8 +461,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn39Mapping() != null) {
-                            String column39Str = getValueFromMapping(row, columns.getColumn39Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn39Mapping() != null) {
+                            String column39Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn39Mapping());
                             if (column39Str != null) {
                                 if (column39Str.length() > 1000) {
                                     column39Str = column39Str.substring(0, 1000);
@@ -469,8 +471,8 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        if (columns.getColumn40Mapping() != null) {
-                            String column40Str = getValueFromMapping(row, columns.getColumn40Mapping());
+                        if (fileColumns.getFileColumnsDetails().getColumn40Mapping() != null) {
+                            String column40Str = getValueFromMapping(row, fileColumns.getFileColumnsDetails().getColumn40Mapping());
                             if (column40Str != null) {
                                 if (column40Str.length() > 1000) {
                                     column40Str = column40Str.substring(0, 1000);
@@ -479,7 +481,7 @@ public class FileImportserviceImplement implements FileImportservice {
                             }
                         }
 
-                        fileImport.setColumnsId(columns.getId());
+                        fileImport.setColumnsId(fileColumns.getId());
                         fileImport.setArchivoImportacion(fileName);
 
                         repository.save(fileImport);
@@ -503,16 +505,15 @@ public class FileImportserviceImplement implements FileImportservice {
             return Optional.of(response);
 
         }
-            catch (FeignException e){
+            catch (FeignException e) {
 
-            throw new ResponseStatusException(HttpStatus.
-                    INTERNAL_SERVER_ERROR, "Error al intentar conectarse con la el microservicio msvc-columns " + e.getMessage());
-
-            }
+                throw new ResponseStatusException(HttpStatus.
+                        INTERNAL_SERVER_ERROR, "Error al obtener registros o  intentar conectarse con el microservicio msvc-columns " + e.getMessage());
 
         }
+    }
 
-        public List<String[]> readCSVFile (String file, char delimitadorArchivoMapping){
+        public List<String[]> readCSVFile (String file, String delimitadorArchivoMapping){
             List<String[]> rows;
             String delimitador = String.valueOf(delimitadorArchivoMapping);
 
@@ -549,17 +550,16 @@ public class FileImportserviceImplement implements FileImportservice {
 
     }
 
-    public Columns getConfigColumnFromFileName(String fileName) {
+    public FileColumnsHeader getConfigColumnFromFileName(String fileName) {
 
         try {
-            ResponseEntity<List<Columns>> response = columnClient.listAllColumns();
-            List<Columns> allColumns = response.getBody();
+            List<FileColumnsHeader> response = columnClient.listAllColumns();
+            List<FileColumnsHeader> allColumns = response;
 
             if (allColumns != null) {
-                for (Columns column : allColumns) {
+                for (FileColumnsHeader column : allColumns) {
                     if (fileName.toLowerCase()
-                            .startsWith(column
-                                    .getStartFile()
+                            .startsWith(column.getStartFile()
                                     .toLowerCase())) {
                         return column;
                     }

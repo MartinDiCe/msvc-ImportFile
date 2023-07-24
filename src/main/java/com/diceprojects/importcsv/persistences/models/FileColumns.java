@@ -6,11 +6,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Columns {
+public class FileColumns {
 
     private FileColumnsHeader header;
     private FileColumnsDetails details;
 
-    public Columns() {
+    public FileColumns() {
     }
 }

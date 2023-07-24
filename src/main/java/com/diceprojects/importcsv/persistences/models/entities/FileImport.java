@@ -1,6 +1,5 @@
 package com.diceprojects.importcsv.persistences.models.entities;
 
-import com.diceprojects.importcsv.persistences.models.Columns;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
