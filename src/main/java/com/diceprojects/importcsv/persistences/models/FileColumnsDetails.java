@@ -97,4 +97,94 @@ public class FileColumnsDetails {
     public FileColumnsDetails() {
     }
 
+
+    public Integer getColumnXMapping(int columnIndex) {
+        switch (columnIndex) {
+            case 0:
+                return getColumn0Mapping();
+            case 1:
+                return getColumn1Mapping();
+            case 2:
+                return getColumn2Mapping();
+            case 3:
+                return getColumn3Mapping();
+            case 4:
+                return getColumn4Mapping();
+            case 5:
+                return getColumn5Mapping();
+            case 6:
+                return getColumn6Mapping();
+            case 7:
+                return getColumn7Mapping();
+            case 8:
+                return getColumn8Mapping();
+            case 9:
+                return getColumn9Mapping();
+            case 10:
+                return getColumn10Mapping();
+            case 11:
+                return getColumn11Mapping();
+            case 12:
+                return getColumn12Mapping();
+            case 13:
+                return getColumn13Mapping();
+            case 14:
+                return getColumn14Mapping();
+            case 15:
+                return getColumn15Mapping();
+            case 16:
+                return getColumn16Mapping();
+            case 17:
+                return getColumn17Mapping();
+            case 18:
+                return getColumn18Mapping();
+            case 19:
+                return getColumn19Mapping();
+            case 20:
+                return getColumn20Mapping();
+            case 21:
+                return getColumn21Mapping();
+            case 22:
+                return getColumn22Mapping();
+            case 23:
+                return getColumn23Mapping();
+            case 24:
+                return getColumn24Mapping();
+            case 25:
+                return getColumn25Mapping();
+            case 26:
+                return getColumn26Mapping();
+            case 27:
+                return getColumn27Mapping();
+            case 28:
+                return getColumn28Mapping();
+            case 29:
+                return getColumn29Mapping();
+            case 30:
+                return getColumn30Mapping();
+            case 31:
+                return getColumn31Mapping();
+            case 32:
+                return getColumn32Mapping();
+            case 33:
+                return getColumn33Mapping();
+            case 34:
+                return getColumn34Mapping();
+            case 35:
+                return getColumn35Mapping();
+            case 36:
+                return getColumn36Mapping();
+            case 37:
+                return getColumn37Mapping();
+            case 38:
+                return getColumn38Mapping();
+            case 39:
+                return getColumn39Mapping();
+            case 40:
+                return getColumn40Mapping();
+            default:
+                return null;
+        }
+    }
+
 }
