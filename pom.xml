@@ -11,8 +11,8 @@
     <groupId>com.diceprojects</groupId>
     <artifactId>msvc-ImportFile</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ImportCSVMELI</name>
-    <description>ImportCSV</description>
+    <name>ImportFile</name>
+    <description>ImportFile</description>
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2022.0.1</spring-cloud.version>
