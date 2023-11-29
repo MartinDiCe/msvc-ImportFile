@@ -13,17 +13,23 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Utilidad para convertir archivos Excel (.xls, .xlsx) a formato CSV.
+ */
 public class ExcelToCsvConverter {
 
+    /**
+     * Convierte un archivo Excel a formato CSV.
+     *
+     * @param filePath    Ruta del archivo.
+     * @param fileName    Nombre del archivo.
+     * @param delimitador Delimitador para el archivo CSV.
+     * @return Ruta del archivo CSV creado.
+     * @throws IOException Si hay un error de lectura o escritura.
+     */
     public static String convertExcelToCsv(String filePath, String fileName, String delimitador) throws IOException {
         try {
             Workbook workbook = getWorkbook(filePath, fileName);
-
-            CreationHelper creationHelper = workbook.getCreationHelper();
-            FormulaEvaluator evaluator = creationHelper.createFormulaEvaluator();
-            evaluator.setIgnoreMissingWorkbooks(true);
-            evaluator.evaluateAll();
-
             Sheet sheet = workbook.getSheetAt(0);
 
             StringBuilder csvContent = new StringBuilder();
@@ -33,8 +39,7 @@ public class ExcelToCsvConverter {
                 Iterator<String> rowDataIterator = rowData.iterator();
 
                 while (rowDataIterator.hasNext()) {
-                    String cellValue = rowDataIterator.next();
-                    csvContent.append(cellValue);
+                    csvContent.append(rowDataIterator.next());
 
                     if (rowDataIterator.hasNext()) {
                         csvContent.append(delimitador);
@@ -51,23 +56,37 @@ public class ExcelToCsvConverter {
         }
     }
 
+    /**
+     * Obtiene el libro de trabajo (Workbook) basado en la extensión del archivo.
+     *
+     * @param filePath Ruta del archivo.
+     * @param fileName Nombre del archivo.
+     * @return Libro de trabajo (Workbook).
+     * @throws IOException Si hay un error de lectura o si el archivo no es un archivo Excel válido.
+     */
     private static Workbook getWorkbook(String filePath, String fileName) throws IOException {
-        if (fileName.endsWith(".xls")) {
-            return new HSSFWorkbook(new FileInputStream(new File(filePath + fileName)));
-        } else if (fileName.endsWith(".xlsx")) {
-            return new XSSFWorkbook(new FileInputStream(new File(filePath + fileName)));
-        } else {
-            throw new IllegalArgumentException("El archivo no es un archivo Excel válido (.xls o .xlsx)");
+        try (InputStream inputStream = new FileInputStream(new File(filePath + fileName))) {
+            if (fileName.endsWith(".xls")) {
+                return new HSSFWorkbook(inputStream);
+            } else if (fileName.endsWith(".xlsx")) {
+                return new XSSFWorkbook(inputStream);
+            } else {
+                throw new IllegalArgumentException("El archivo no es un archivo Excel válido (.xls o .xlsx)");
+            }
         }
     }
 
+    /**
+     * Obtiene el valor de una celda como cadena.
+     *
+     * @param cell Celda.
+     * @return Valor de la celda como cadena.
+     */
     private static String getCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return "";
         } else {
             switch (cell.getCellType()) {
-                case BLANK:
-                    return " ";
                 case STRING:
                     return cell.getStringCellValue();
                 case NUMERIC:
@@ -86,6 +105,12 @@ public class ExcelToCsvConverter {
         }
     }
 
+    /**
+     * Obtiene los datos de una fila como una lista de cadenas.
+     *
+     * @param row Fila.
+     * @return Lista de datos de la fila.
+     */
     private static List<String> getRowData(Row row) {
         List<String> rowData = new ArrayList<>();
         Iterator<Cell> cellIterator = row.cellIterator();
@@ -98,6 +123,15 @@ public class ExcelToCsvConverter {
         return rowData;
     }
 
+    /**
+     * Guarda el contenido CSV en un archivo y devuelve la ruta del archivo CSV creado.
+     *
+     * @param filePath     Ruta del archivo.
+     * @param fileName     Nombre del archivo Excel.
+     * @param csvContent   Contenido CSV.
+     * @return Ruta del archivo CSV creado.
+     * @throws IOException Si hay un error de escritura.
+     */
     private static String saveCsvFile(String filePath, String fileName, String csvContent) throws IOException {
         String csvFileName = fileName.replaceFirst("[.][^.]+$", "") + ".csv";
         String csvFilePath = filePath + csvFileName;
