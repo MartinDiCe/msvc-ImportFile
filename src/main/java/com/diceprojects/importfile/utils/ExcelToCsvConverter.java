@@ -2,6 +2,7 @@ package com.diceprojects.importfile.utils;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,22 +35,46 @@ public class ExcelToCsvConverter {
 
             StringBuilder csvContent = new StringBuilder();
 
+            CellReference prevCellRef = null;
+
             for (Row row : sheet) {
                 List<String> rowData = getRowData(row);
                 Iterator<String> rowDataIterator = rowData.iterator();
 
-                while (rowDataIterator.hasNext()) {
-                    csvContent.append(rowDataIterator.next());
+                boolean isFirstCell = true;  // Bandera para identificar la primera celda en la fila
 
-                    if (rowDataIterator.hasNext()) {
+                while (rowDataIterator.hasNext()) {
+                    CellReference currentCellRef = new CellReference(row.getRowNum(), row.getFirstCellNum() + rowData.indexOf(rowDataIterator.next()));
+
+                    // Verifica si hay un salto en las celdas
+                    if (prevCellRef != null && isGapDetected(prevCellRef, currentCellRef)) {
+                        // Si hay un salto, agrega celdas vacías hasta alcanzar la celda actual
+                        int gapCols = currentCellRef.getCol() - prevCellRef.getCol();
+                        for (int i = 0; i < gapCols; i++) {
+                            if (!isFirstCell) {
+                                csvContent.append(delimitador);
+                            }
+                            csvContent.append(delimitador);
+                        }
+                    }
+
+                    // Agrega el valor de la celda actual
+                    Cell cell = row.getCell(currentCellRef.getCol());
+                    if (!isFirstCell) {
                         csvContent.append(delimitador);
                     }
+                    csvContent.append(getCellValue(cell));
+
+                    isFirstCell = false;  // Después de la primera celda, cambia la bandera
+
+                    prevCellRef = currentCellRef;
                 }
 
                 csvContent.append(System.lineSeparator());
             }
 
             return saveCsvFile(filePath, fileName, csvContent.toString());
+
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error al leer el archivo Excel", e);
@@ -117,11 +142,22 @@ public class ExcelToCsvConverter {
 
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next();
-            rowData.add(getCellValue(cell));
+            rowData.add(getCellValueOrEmpty(cell));
         }
 
         return rowData;
     }
+
+    /**
+     * Obtiene el valor de una celda como cadena o una cadena vacía si la celda es nula o está vacía.
+     *
+     * @param cell Celda.
+     * @return Valor de la celda como cadena o cadena vacía si la celda es nula o está vacía.
+     */
+    private static String getCellValueOrEmpty(Cell cell) {
+        return (cell == null || cell.getCellType() == CellType.BLANK) ? "" : getCellValue(cell);
+    }
+
 
     /**
      * Guarda el contenido CSV en un archivo y devuelve la ruta del archivo CSV creado.
@@ -142,4 +178,17 @@ public class ExcelToCsvConverter {
 
         return csvFilePath;
     }
+
+    /**
+     * Verifica si hay un salto en las columnas o en las filas entre dos referencias de celda consecutivas.
+     *
+     * @param prevCellRef    La referencia de celda previa.
+     * @param currentCellRef La referencia de celda actual.
+     * @return true si hay un salto, false de lo contrario.
+     */
+    private static boolean isGapDetected(CellReference prevCellRef, CellReference currentCellRef) {
+        return currentCellRef.getCol() > prevCellRef.getCol() ||
+                currentCellRef.getRow() > prevCellRef.getRow() + 1;
+    }
+
 }

@@ -1,6 +1,9 @@
 package com.diceprojects.importfile.services;
 
 import com.diceprojects.importfile.clients.ColumnsClientRestApi;
+import com.diceprojects.importfile.exceptions.LineDuplicateException;
+import com.diceprojects.importfile.persistences.models.FileColumns;
+import com.diceprojects.importfile.persistences.models.FileColumnsDetails;
 import com.diceprojects.importfile.persistences.models.FileColumnsHeader;
 import com.diceprojects.importfile.persistences.models.dto.ImportResponseDTO;
 import com.diceprojects.importfile.utils.FileExtensionHandler;
@@ -15,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
@@ -60,11 +64,6 @@ public class FileImportServiceImplement implements FileImportService {
             if (fileColumns == null) {
                 throw new ColumnsNoEncontradasException(fileName);
             }
-            FileImport existingImport = repository.findFirstByArchivoImportacion(fileName);
-            if (existingImport != null) {
-                throw new ResponseStatusException(HttpStatus.
-                        CONFLICT, "El archivo '" + fileName + "' ya ha sido importado anteriormente.");
-            }
 
             String file = FileExtensionHandler.handleFileExtension(filePath,fileName,fileColumns.getDelimitadorArchivoMapping());
 
@@ -108,9 +107,10 @@ public class FileImportServiceImplement implements FileImportService {
 
                 }
 
+            } catch (LineDuplicateException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
             } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus
-                        .INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al importar archivo", e);
             }
 
             ImportResponseDTO response = new ImportResponseDTO();
@@ -126,6 +126,7 @@ public class FileImportServiceImplement implements FileImportService {
 
         }
     }
+
 
     /**
      * Lee el contenido de un archivo CSV y devuelve una lista de matrices de cadenas.

@@ -1,7 +1,6 @@
 package com.diceprojects.importfile.persistences.models;
 
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 /**
@@ -99,7 +98,6 @@ public class FileColumnsDetails {
 
     public FileColumnsDetails() {
     }
-
 
     public Integer getColumnXMapping(int columnIndex) {
         switch (columnIndex) {
